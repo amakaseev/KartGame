@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
+using Cinemachine;
 
 namespace Kart {
 
@@ -77,8 +74,10 @@ namespace Kart {
 
     private void HandleSteering(AxleInfo axleInfo, float steering) {
       if (axleInfo.steering) {
-        axleInfo.leftWheel.steerAngle = Mathf.Lerp(axleInfo.leftWheel.steerAngle, steering, 10 * Time.fixedDeltaTime);
-        axleInfo.rightWheel.steerAngle = Mathf.Lerp(axleInfo.rightWheel.steerAngle, steering, 10 * Time.fixedDeltaTime);
+        axleInfo.leftWheel.steerAngle = Mathf.Lerp(axleInfo.leftWheel.steerAngle, steering, 20f * Time.fixedDeltaTime);
+        axleInfo.rightWheel.steerAngle = Mathf.Lerp(axleInfo.rightWheel.steerAngle, steering, 20f * Time.fixedDeltaTime);
+        //axleInfo.leftWheel.steerAngle = steering;
+        //axleInfo.rightWheel.steerAngle = steering;
       }
     }
 
