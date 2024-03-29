@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11847114, y: 0.6971116, z: -0.11847114, w: 0.6971116}
+  m_LocalRotation: {x: 0.11847113, y: 0.6971116, z: -0.11847113, w: 0.6971116}
   m_LocalPosition: {x: -30.05, y: 3.5, z: -59.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -769,7 +769,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300683127}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11847114, y: 0.6971116, z: -0.11847114, w: 0.6971116}
+  m_LocalRotation: {x: 0.11847113, y: 0.6971116, z: -0.11847113, w: 0.6971116}
   m_LocalPosition: {x: -30.05, y: 3.5, z: -59.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2435,8 +2435,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   turnStrength: 1500
-  driftSteerMultiplayer: 1.5
-  breakTorgue: 100000
+  driftSteerMultiplier: 1.5
+  brakeTorque: 10000
   centerOfMass: {fileID: 0}
   downForce: 100
   gravity: -9.81
@@ -2805,8 +2805,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   turnStrength: 1500
-  driftSteerMultiplayer: 1.5
-  breakTorgue: 10000
+  driftSteerMultiplier: 1.5
+  brakeTorque: 10000
   centerOfMass: {fileID: 1726625914}
   downForce: 100
   gravity: -9.81

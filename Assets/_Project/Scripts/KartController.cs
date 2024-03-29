@@ -30,7 +30,7 @@ namespace Kart {
 
     [Header("Braking and Drifting")]
     [SerializeField] float driftSteerMultiplier = 1.5f; // Change in steering duration a drift
-    [SerializeField] float breakTorgue = 10000f;
+    [SerializeField] float brakeTorque = 10000f;
 
     [Header("Physics")]
     [SerializeField] Transform centerOfMass;
@@ -96,32 +96,33 @@ namespace Kart {
     private void HandleGroundedMovement(float verticalInput, float horizontalInput) {
       // Turn logic
       if (Mathf.Abs(verticalInput) > 0.1f || Mathf.Abs(kartVelocity.z) > 1) {
-        float turnMultiplayer = Mathf.Clamp01(turnCurve.Evaluate(kartVelocity.magnitude / maxSpeed));
-        rb.AddTorque(Vector3.up * horizontalInput * Mathf.Sign(kartVelocity.z) * turnStrength * 100f * turnMultiplayer);
+        float turnMultiplier = Mathf.Clamp01(turnCurve.Evaluate(kartVelocity.magnitude / maxSpeed));
+        rb.AddTorque(Vector3.up * (horizontalInput * Mathf.Sign(kartVelocity.z) * turnStrength * 100f * turnMultiplier));
       }
 
-      // Acceleration logic
+      // Acceleration Logic
       if (!input.IsBraking) {
         float targetSpeed = verticalInput * maxSpeed;
         Vector3 forwardWithoutY = transform.forward.With(y: 0).normalized;
         rb.velocity = Vector3.Lerp(rb.velocity, forwardWithoutY * targetSpeed, Time.deltaTime);
       }
 
-      // Downforce - always push the kart down, using lateral Gs to scale the force if the kart is movind sideways fast
+      // Downforce - always push the cart down, using lateral Gs to scale the force if the Kart is moving sideways fast
       float speedFactor = Mathf.Clamp01(rb.velocity.magnitude / maxSpeed);
       float lateralG = Mathf.Abs(Vector3.Dot(rb.velocity, transform.right));
       float downForceFactor = Mathf.Max(speedFactor, lateralG / lateralGScale);
-      rb.AddForce(-transform.up * downForce * rb.mass * downForceFactor);
+      rb.AddForce(-transform.up * (downForce * rb.mass * downForceFactor));
 
       // Shift Center of Mass
       float speed = rb.velocity.magnitude;
       Vector3 centerOfMassAdjustment = (speed > thresholdSpeed)
-        ? new Vector3(0f, 0f, Mathf.Abs(verticalInput) > 0.1f ? Mathf.Sign(verticalInput) * centerOfMassOffset : 0f)
-        : Vector3.zero;
+          ? new Vector3(0f, 0f, Mathf.Abs(verticalInput) > 0.1f ? Mathf.Sign(verticalInput) * centerOfMassOffset : 0f)
+          : Vector3.zero;
       rb.centerOfMass = originalCenterOfMass + centerOfMassAdjustment;
     }
 
     private void UpdateBanking(float horizontalInput) {
+      // Bank the Kart in the opposite direction of the turn
       float targetBankAngle = horizontalInput * -maxBankAngle;
       Vector3 currentEuler = transform.localEulerAngles;
       currentEuler.z = Mathf.LerpAngle(currentEuler.z, targetBankAngle, Time.deltaTime * bankSpeed);
@@ -129,11 +130,12 @@ namespace Kart {
     }
 
     private void HandleAirborneMovement(float verticalInput, float horizontalInput) {
+      // Apply gravity to the Kart while its airborne
       rb.velocity = Vector3.Lerp(rb.velocity, rb.velocity + Vector3.down * gravity, Time.deltaTime * gravity);
     }
 
     private void UpdateAxeles(float motor, float steering) {
-      foreach (var axleInfo in axleInfos) {
+      foreach (AxleInfo axleInfo in axleInfos) {
         HandleSteering(axleInfo, steering);
         HandleMotor(axleInfo, motor);
         HandleBrakesAndDrift(axleInfo);
@@ -144,8 +146,9 @@ namespace Kart {
 
     private void HandleSteering(AxleInfo axleInfo, float steering) {
       if (axleInfo.steering) {
-        axleInfo.leftWheel.steerAngle = steering;
-        axleInfo.rightWheel.steerAngle = steering;
+        float steeringMultiplier = input.IsBraking ? driftSteerMultiplier : 1f;
+        axleInfo.leftWheel.steerAngle = steering * steeringMultiplier;
+        axleInfo.rightWheel.steerAngle = steering * steeringMultiplier;
       }
     }
 
@@ -164,8 +167,8 @@ namespace Kart {
           float newZ = Mathf.SmoothDamp(rb.velocity.z, 0, ref brakeVelocity, 1f);
           rb.velocity = rb.velocity.With(z: newZ);
 
-          axleInfo.leftWheel.brakeTorque = breakTorgue;
-          axleInfo.rightWheel.brakeTorque = breakTorgue;
+          axleInfo.leftWheel.brakeTorque = brakeTorque;
+          axleInfo.rightWheel.brakeTorque = brakeTorque;
           ApplyDriftFriction(axleInfo.leftWheel);
           ApplyDriftFriction(axleInfo.rightWheel);
         } else {
@@ -181,7 +184,8 @@ namespace Kart {
 
     private void ResetDriftFriction(WheelCollider wheel) {
       AxleInfo axleInfo = axleInfos.FirstOrDefault(axle => axle.leftWheel == wheel || axle.rightWheel == wheel);
-      if (axleInfo == null) return;
+      if (axleInfo == null)
+        return;
 
       wheel.forwardFriction = axleInfo.originalForwardFriction;
       wheel.sidewaysFriction = axleInfo.originalSidewaysFriction;
@@ -196,8 +200,16 @@ namespace Kart {
     }
 
     WheelFrictionCurve UpdateFriction(WheelFrictionCurve friction) {
-      friction.stiffness = input.IsBraking ? Mathf.SmoothDamp(friction.stiffness, .5f, ref driftVelocity, Time.deltaTime * 2) : 1f;
+      friction.stiffness = input.IsBraking ? Mathf.SmoothDamp(friction.stiffness, .5f, ref driftVelocity, Time.deltaTime * 2f) : 1f;
       return friction;
+    }
+
+    float AdjustInput(float input) {
+      return input switch {
+        >= .7f => 1f,
+        <= -.7f => -1f,
+        _ => input
+      };
     }
 
     private void UpdateWheelVisuals(WheelCollider collider) {
@@ -214,13 +226,6 @@ namespace Kart {
       visualWheel.transform.rotation = rotation;
     }
 
-    float AdjustInput(float input) {
-      return input switch {
-        >= .7f => 1f,
-        <= -.7f => -1f,
-        _ => input
-      };
-    }
 
   }
 
