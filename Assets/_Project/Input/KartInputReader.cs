@@ -33,7 +33,6 @@ namespace Kart {
     }
 
     public void OnBrake(InputAction.CallbackContext context) {
-      Debug.Log("OnBrake");
     }
   }
 
