@@ -210,7 +210,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.18910751, y: -0.000000008447955, z: 0.0000000016269276, w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: 0.0000000084479606, z: -0.0000000016269286,
+    w: 0.9819564}
   m_LocalPosition: {x: -2.48, y: 4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -926,7 +927,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300683127}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.18910751, y: -0.000000008447955, z: 0.0000000016269276, w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: 0.0000000084479606, z: -0.0000000016269286,
+    w: 0.9819564}
   m_LocalPosition: {x: -2.48, y: 4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2407,7 +2409,7 @@ MonoBehaviour:
   axleInfos:
   - leftWheel: {fileID: 7161689254728272606}
     rightWheel: {fileID: 314971172174731321}
-    motor: 0
+    motor: 1
     steering: 1
   - leftWheel: {fileID: 7887936941789151148}
     rightWheel: {fileID: 5223429400795834507}
@@ -2702,16 +2704,16 @@ MonoBehaviour:
   axleInfos:
   - leftWheel: {fileID: 1313836953}
     rightWheel: {fileID: 1141759924}
-    motor: 0
+    motor: 1
     steering: 1
   - leftWheel: {fileID: 526290092}
     rightWheel: {fileID: 1903123686}
     motor: 1
     steering: 0
   maxMotorTorque: 3000
-  maxSpeed: 1000
+  maxSpeed: 100
   maxSteeringAngle: 30
-  breakTorgue: 10000
+  breakTorgue: 100000
   input: {fileID: 11400000, guid: 4581a6eb51b3fba4694d760c2d184386, type: 2}
 --- !u!1 &9158325167991643310
 GameObject:
